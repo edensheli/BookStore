@@ -4,9 +4,8 @@ import * as Express from 'express'
 import { buildSchema } from 'type-graphql'
 import { connectDB } from "./dbconfig"
 import * as cors from "cors"
-import { CategoryResolver, AuthorResolver, UserResolver } from "./resolvers"
+import { CategoryResolver, AuthorResolver, UserResolver,BookResolver } from "./resolvers"
 import * as cookieParser from 'cookie-parser'
-import { BookResolver } from "./resolvers/Book"
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
