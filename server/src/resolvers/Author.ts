@@ -29,5 +29,3 @@ export class AuthorResolver {
     return `${author.firstName} ${author.lastName} is deleted!`
   }
 }
-
-
