@@ -4,15 +4,20 @@ import * as Express from 'express'
 import { buildSchema } from 'type-graphql'
 import { connectDB } from "./dbconfig"
 import * as cors from "cors"
-import { CategoryResolver, AuthorResolver,UserResolver } from "./resolvers"
+import { CategoryResolver, AuthorResolver, UserResolver } from "./resolvers"
 import * as cookieParser from 'cookie-parser'
+import { BookResolver } from "./resolvers/Book"
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
 const main = async () => {
 
   await connectDB()
 
   const schema = await buildSchema({
-    resolvers: [CategoryResolver, AuthorResolver, UserResolver]
+    resolvers: [CategoryResolver, AuthorResolver, UserResolver,BookResolver]
   })
 
   const apolloServer = new ApolloServer({ schema, context: ({ req, res }: any) => ({ req, res }) })
@@ -25,8 +30,8 @@ const main = async () => {
 
   apolloServer.applyMiddleware({ app })
 
-  app.listen(4000, () => {
-    console.log('server started on http://localhost:4000/graphql');
+  app.listen(process.env.PORT, () => {
+    console.log(`server started on http://localhost:${process.env.PORT}/graphql`);
   })
 }
 

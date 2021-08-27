@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 
 export const connectDB = async () => {
-  await mongoose.connect("mongodb://localhost:27017/books")
+  await mongoose.connect(<string>process.env.MONGO_URI)
   console.log('MongoDB connected');
 }
 

@@ -8,13 +8,13 @@ export const IsAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
   if (!token) {
     throw new Error("Not authenticated");
   }
-
   try {
-    const payload = verify(token, "sdasdasdasdsa");
-    console.log(payload);
+    const payload = verify(token, <string>process.env.ACCESS_TOKEN_SECRET);
     context.payload = payload as any;
   } catch (err) {
-    console.log(err);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(err);
+    }
     throw new Error("Not authenticated");
   }
   return next();

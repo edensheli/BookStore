@@ -1,24 +1,11 @@
 import { User, UserModel } from '../models'
-import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { compare, genSalt, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import { MyContext } from 'src/types/MyContext';
+import { MyContext } from '../types/MyContext';
 import { IsAuth } from '../middleware/IsAuth';
+import { RegisterInput } from '../types/Input/UserInput';
 
-@ObjectType()
-class LoginMessage {
-
-  @Field(() => String, { nullable: false })
-  message!: string
-
-  @Field(() => User, { nullable: true })
-  user: User | null
-
-  constructor(msg: string, user: User | null = null) {
-    this.message = msg
-    this.user = user
-  }
-}
 
 @Resolver()
 export class UserResolver {
@@ -31,10 +18,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   async register(
-    @Arg('firstName') firstName: string,
-    @Arg('lastName') lastName: string,
-    @Arg('email') email: string,
-    @Arg('password') password: string,
+    @Arg('data') { password, email, firstName, lastName }: RegisterInput
   ): Promise<User> {
     const salt = await genSalt();
     const hashPassword = await hash(password, salt)
@@ -42,26 +26,24 @@ export class UserResolver {
     return await newUser.save()
   }
 
-  @Mutation(() => LoginMessage)
+  @Mutation(() => User)
   async login(
     @Arg('email') email: string,
     @Arg('password') password: string,
     @Ctx() ctx: MyContext
-  ): Promise<LoginMessage> {
+  ): Promise<User> {
     const user = await UserModel.findOne({ email })
     if (!user) {
-      return new LoginMessage("no user found")
+      throw new Error("no user found")
     }
     const verify = await compare(password, user.password);
 
     if (!verify) {
-      return new LoginMessage("password incorrect")
+      throw new Error("password incorrect")
     }
 
-    const refreshToken = sign({ userId: user._id }, 'sdasdasdasdsa', { expiresIn: '7d' })
-    const accessToken = sign({ userId: user._id }, 'sdasdasdasdsa', { expiresIn: '60min' })
-    ctx.res.cookie('refresh-token', refreshToken)
+    const accessToken = sign({ userId: user._id }, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60min' })
     ctx.res.cookie('access-token', accessToken)
-    return new LoginMessage("login success!", user)
+    return user
   }
 }

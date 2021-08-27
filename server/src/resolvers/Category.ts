@@ -1,5 +1,6 @@
 import { Category, CategoryModel } from '../models'
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import { IsAuth } from '../middleware/IsAuth';
 
 @Resolver()
 export class CategoryResolver {
@@ -9,6 +10,7 @@ export class CategoryResolver {
   }
 
   @Mutation(() => Category)
+  @UseMiddleware(IsAuth)
   async addCategory(
     @Arg('name') name: string,
   ): Promise<Category> {
@@ -17,6 +19,7 @@ export class CategoryResolver {
   }
 
   @Mutation(() => Category)
+  @UseMiddleware(IsAuth)
   async removeCategory(
     @Arg('name') name: string,
   ): Promise<string> {
