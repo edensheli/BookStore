@@ -1,14 +1,17 @@
 import { gql, useQuery } from "@apollo/client";
-import { Catergory } from "../../common/interfaces/Category";
 
-const GET_CATEGORIES = gql`
+export const GET_CATEGORIES = gql`
   query getAllCategories {
     getAllCategories {
+      _id
       name
     }
   }
 `;
-export const useGetCategories = (): Catergory[] | undefined => {
-  const { data } = useQuery(GET_CATEGORIES);
-  return data.getAllCategories;
+export const useGetCategories = () => {
+  const { data, error } = useQuery(GET_CATEGORIES);
+  if (error && process.env.NODE_ENV === 'development') {
+    console.log(error);
+  }
+  return data
 };

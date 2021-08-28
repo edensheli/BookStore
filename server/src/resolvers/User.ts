@@ -42,8 +42,15 @@ export class UserResolver {
       throw new Error("password incorrect")
     }
 
-    const accessToken = sign({ userId: user._id }, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60min' })
-    ctx.res.cookie('access-token', accessToken)
+    const accessToken = sign({ userId: user._id }, <string>process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
+    ctx.res.cookie('access-token', accessToken, { maxAge: 86400000, httpOnly: true })
     return user
+  }
+
+  @Mutation(() => String)
+  @UseMiddleware(IsAuth)
+  logout(@Ctx() ctx: MyContext) {
+    ctx.res.clearCookie('access-token')
+    return "user logout";
   }
 }

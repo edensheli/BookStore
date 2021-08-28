@@ -21,13 +21,13 @@ export class CategoryResolver {
   @Mutation(() => Category)
   @UseMiddleware(IsAuth)
   async removeCategory(
-    @Arg('name') name: string,
-  ): Promise<string> {
-    const category = await CategoryModel.findOne({ name })
+    @Arg('id') id: string,
+  ): Promise<Category> {
+    const category = await CategoryModel.findById(id)
     if (!category) {
-      return `No category was found with the name ${name}`;
+      throw new Error('no category found')
     }
-    return `${name} deleted!`
+    return await category.delete()
   }
 }
 
