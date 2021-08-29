@@ -20,8 +20,8 @@ function Routes() {
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
-          <Route exact path="/books" component={me ? Categories : Books} />
-          <Route exact path="/authors" component={me ? Categories : Authors} />
+          <Route exact path="/books" component={me ? Books : Login} />
+          <Route exact path="/authors" component={me ? Authors : Login} />
           <Route exact path="/categories" component={me ? Categories : Login} />
         </Switch>
       </div>

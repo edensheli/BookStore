@@ -10,87 +10,88 @@ import {
   TableRow,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import { Author } from "../../common/interfaces/Author";
 import { DELETE_AUTHOR } from "../../hooks/author/deleteAuthor";
-import {
-  GET_AUTHORS,
-  useGetAllAuthors,
-} from "../../hooks/author/useGetAllAuthors";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import AuthorModal from "./AuthorModal";
+import BookModal from "./BookModal";
+import { GET_BOOKS, useGetAllBooks } from "../../hooks/book/useGetAllBooks";
+import { Book } from "../../common/interfaces/Book";
 
-function AuthorsTable() {
+function BooksTable() {
   const [modalShow, setModalShow] = React.useState(false);
-  const [authors, setAuthors] = useState<Author[] | undefined>();
+  const [books, setBooks] = useState<Book[] | undefined>();
   const [modal, setModal] = useState(<></>);
-  const [removeAuthor] = useMutation(DELETE_AUTHOR, {
-    refetchQueries: [{ query: GET_AUTHORS }],
+  const [removeBook] = useMutation(DELETE_AUTHOR, {
+    refetchQueries: [{ query: GET_BOOKS }],
   });
 
-  const firstLoad = useGetAllAuthors();
+  const firstLoad = useGetAllBooks();
 
   useEffect(() => {
-    setAuthors(firstLoad?.getAllAuthors);
+    setBooks(firstLoad?.getAllBooks);
   }, [firstLoad]);
 
-  const deleteAuthor = async (email: string | undefined) => {
+  const deleteBook = async (id: string | undefined) => {
     try {
-      removeAuthor({ variables: { email } });
+      removeBook({ variables: { id } });
     } catch {}
   };
 
-  const editAuthor = (author: Author) => {
+  const editBook = (book: Book) => {
     setModal(
-      <AuthorModal
-      id={author._id}
+      <BookModal
+        id={book._id}
         method="edit"
-        firstName={author.firstName}
-        lastName={author.lastName}
-        email={author.email}
+        title={book.title}
+        price={book.price}
+        author={book.author}
+        category={book.category}
         show={true}
         onHide={() => setModalShow(false)}
       />
     );
     setModalShow(true);
   };
-
   return (
     <>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>First Name</TableCell>
-              <TableCell>Last Name</TableCell>
-              <TableCell>Email</TableCell>
+              <TableCell>Title</TableCell>
+              <TableCell>Author</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell>Price</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {authors?.map((author: Author) => (
-              <TableRow key={author._id}>
+            {books?.map((book: Book) => (
+              <TableRow key={book._id}>
                 <TableCell component="th" scope="row">
-                  {author.firstName}
+                  {book.title}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {author.lastName}
+                  {book.author.firstName} {book.author.lastName}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {author.email}
+                  {book.category.name}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {book.price}
                 </TableCell>
                 <TableCell align="right">
                   <IconButton
                     aria-label="delete"
                     component="span"
-                    onClick={() => deleteAuthor(author.email)}
+                    onClick={() => deleteBook(book._id)}
                   >
                     <DeleteIcon />
                   </IconButton>
                   <IconButton
                     aria-label="edit"
                     component="span"
-                    onClick={() => editAuthor(author)}
+                    onClick={() => editBook(book)}
                   >
                     <EditIcon />
                   </IconButton>
@@ -105,4 +106,4 @@ function AuthorsTable() {
   );
 }
 
-export default AuthorsTable;
+export default BooksTable;

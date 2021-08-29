@@ -16,12 +16,12 @@ export class Book extends Typegoose {
   public title!: string;
 
   @Field(() => Author, { nullable: false })
-  @prop({ ref: () => Author, required: true })
-  public author: Ref<Author>;
+  @prop({ ref: 'Author', required: true })
+  public author!: Ref<Author>;
 
   @Field(() => Category, { nullable: false })
-  @prop({ ref: () => Category, required: true })
-  public category: Ref<Category>;
+  @prop({ ref: 'Category', required: true })
+  public category!: Ref<Category>;
 
   @Field(() => Int, { nullable: false })
   @prop({ required: true })

@@ -29,7 +29,8 @@ export class BookResolver {
 
   @Query(() => [Book], { nullable: true })
   async getAllBooks(): Promise<Book[] | null> {
-    return await BookModel.find({}).populate('author').populate('category').exec()
+    const books = await BookModel.find({}).populate('author').populate('category').exec()
+    return books
   }
 
   @Query(() => [Book])

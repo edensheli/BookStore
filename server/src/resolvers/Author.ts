@@ -36,16 +36,16 @@ export class AuthorResolver {
     return newAuthor
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Author)
   @UseMiddleware(IsAuth)
   async removeAuthor(
     @Arg('email') email: string,
-  ): Promise<string> {
+  ): Promise<Author> {
     const author = await AuthorModel.findOne({ email })
     if (!author) {
       throw new Error(`No Author was found with the email: ${email}`);
     }
-    return `${author.firstName} ${author.lastName} is deleted!`
+    return await author.delete()
   }
 
   @Mutation(() => Author)
@@ -58,11 +58,13 @@ export class AuthorResolver {
     if (!author) {
       throw new Error('No author found')
     }
-
-    const alreadyExist = await AuthorModel.findOne({ email })
-    if (alreadyExist) {
-      throw new Error('Email already exists')
+    if (email !== author.email) {
+      const alreadyExist = await AuthorModel.findOne({ email })
+      if (alreadyExist) {
+        throw new Error('Email already exists')
+      }
     }
+
     await author.update({ firstName, lastName, email })
     return author
   }
