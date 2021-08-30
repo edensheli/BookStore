@@ -44,6 +44,7 @@ function Header(props: any) {
           ) : (
             <Nav>
               <MenuItem to="/login">Login</MenuItem>
+              <MenuItem to="/register">Register</MenuItem>
             </Nav>
           )}
         </Navbar.Collapse>

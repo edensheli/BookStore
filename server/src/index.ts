@@ -7,9 +7,8 @@ import * as cors from "cors"
 import { CategoryResolver, AuthorResolver, UserResolver, BookResolver } from "./resolvers"
 import * as cookieParser from 'cookie-parser'
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
+require('dotenv').config()
+
 
 const main = async () => {
 
@@ -23,7 +22,7 @@ const main = async () => {
 
   const app = Express()
 
-  app.use(cors({ credentials: true, origin: 'http://localhost:3000' }))
+  app.use(cors({ credentials: true, origin: '*' }))
 
   app.use(cookieParser())
 
